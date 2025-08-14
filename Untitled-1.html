@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>I LOVE YOU động + hiệu ứng hạt rơi</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: #111;
+        overflow: hidden;
+        font-family: "Arial Black", Arial, sans-serif;
+      }
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .love-text {
+        color: transparent;
+        font-size: 72px;
+        font-weight: bold;
+        letter-spacing: 8px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        -webkit-text-stroke: 2px hotpink; /* viền hồng */
+        text-shadow: 0 0 8px hotpink, 0 0 16px hotpink, 0 0 24px hotpink;
+        animation: beat 1s infinite;
+        user-select: none;
+      }
+      @keyframes beat {
+        0%,
+        100% {
+          transform: scale(1);
+          text-shadow: 0 0 8px hotpink, 0 0 16px hotpink, 0 0 24px hotpink;
+        }
+        50% {
+          transform: scale(1.15);
+          text-shadow: 0 0 16px hotpink, 0 0 32px hotpink, 0 0 48px hotpink;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="love-text">I LOVE YOU</div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      let particles = [];
+
+      function createParticle() {
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 3 + 1,
+          speedY: Math.random() * 2 + 1,
+          opacity: Math.random(),
+          opacityChange: Math.random() * 0.02 + 0.01,
+        };
+      }
+
+      for (let i = 0; i < 150; i++) {
+        particles.push(createParticle());
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+          ctx.fill();
+
+          p.y += p.speedY;
+          p.opacity += p.opacityChange;
+
+          if (p.opacity > 1 || p.opacity < 0.1) {
+            p.opacityChange = -p.opacityChange;
+          }
+
+          if (p.y > height) {
+            p.x = Math.random() * width;
+            p.y = 0;
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      window.addEventListener("resize", () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      });
+    </script>
+  </body>
+</html>
